@@ -1,61 +1,64 @@
 .DATA
-	hauteur DW 16
-	longueur DW 256
-	x DW 0
-	y DW 0
-	coul DW 0
-
+	
 .CODE 
-	LEA SP,STACK
-	; Effacer l'écran
+	LEA SP,STACK 
 	LD R5,0
-	out R5,5
-
-	; Initialisation des paramètres
-	LD R0,coul
-	LD R1,hauteur
-	LD R2,longueur
-	LD R3,x
-	LD R4,y
-
-	; Vérification de terminaison
-draw: CMP R0,16
-	BGEU end
-
-	; Passage des paramètres
+	OUT R5,5
+	LD R0,0
+	LD R1,0
+	LD R2,0
+	LD R3,255
+	LD R4,16
+	
+boucle: 
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	call Dessinrectangle
+	ADD R0,1
+	ADD	R2,8
+	CMP R0,16  ; VÃ©rifier si on a fait toutes les couleurs
+	BEQ fin
+	JMP boucle
+fin: HLT
+	
+Dessinrectangle: 
 	PUSH R0
 	PUSH R1
 	PUSH R2
 	PUSH R3
 	PUSH R4
 
-	; Dessin + maj couleur & y
-	CALL Dessinrectangle
-	INC R0
-	ADD R4,16
+	; RÃ©cupÃ©rer les infos
+	LD R0,[sp+10]
+	LD R1,[sp+9]
+	LD R2,[sp+8]
+	LD R3,[sp+7]
+	LD R4,[sp+6]
 
-end: HLT
+	; Envoyer aux ports
+	OUT R1,1
+	OUT R2,2
+	OUT R3,3
+	OUT R4,4
 
-	; Dessin du rectange
-Dessinrectangle: 
-	; Récupérer les paramètres
-	PULL R4
-	PULL R3
-	PULL R2
-	PULL R1
-	PULL R0
-
-	; Créer la commande graphique
+	; CrÃ©er la commande graphique
 	MULU R0,16
 	ADD R0,5
 
-	; Envoyer les infos aux ports pour affichage
-	out R1,1
-	out R2,2
-	out R3,3
-	out R4,4
-	out R0,5
-	ret 
+	; l'envoyer
+	OUT R0,5
 
+	; Vider la pile
+	PULL R0
+	PULL R1
+	PULL R2
+	PULL R3
+	PULL R4
+	ret 5
+	
+	
 
-.STACK
+.STACK 20
