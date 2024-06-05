@@ -6,44 +6,48 @@
 
 .CODE 
 	LEA SP,STACK
-	; Effacer l'écran
+	; Effacer l'ï¿½cran
 	LD R5,0
 	out R5,5
 
-	; Initialisation des paramètres
+	; Initialisation des paramï¿½tres
 	LD R0,12
 	LD R1,hauteur
 	LD R2,longueur
 	LD R3,x
 	LD R4,y
 
-	; Mettre les paramètres dans la pile
+	; Mettre les paramï¿½tres dans la pile
 	PUSH R0
 	PUSH R1
 	PUSH R2
 	PUSH R3
 	PUSH R4
 	CALL Dessinrectangle
+	HLT
 	
 ; Dessin du rectange
 Dessinrectangle: 
-	; Récupérer les paramètres
-	PULL R4
-	PULL R3
-	PULL R2
-	PULL R1
-	PULL R0
+	; Rï¿½cupï¿½rer les paramï¿½tres
+	LD R0,[SP+5]
+	LD R1,[SP+4]
+	LD R2,[SP+3]
+	LD R3,[SP+2]
+	LD R4,[SP+1]
 
-	; Créer la commande graphique
-	MULU R0,16
-	ADD R0,3
-
-	; Envoyer les infos aux ports pour affichage
+	; Envoyer les valeurs aux ports
 	out R1,1
 	out R2,2
 	out R3,3
 	out R4,4
+	
+
+	; Crï¿½er la commande graphique
+	MULU R0,16
+	ADD R0,5
+
+	; Envoyer les infos aux ports pour affichage
 	out R0,5
-	ret 
+	ret 5
 
 .STACK 20
