@@ -7,8 +7,11 @@
     couleur DW 15
 .CODE 
 	LEA SP,STACK 
+	; Effacer l'écran
 	LD R5,0
 	OUT R5,5
+
+	; Initialiser pour le dessin de la 'mire'
 	LD R0,0
 	LD R1,0
 	LD R2,0
@@ -31,30 +34,42 @@ dessinlignemire:
 
 findessinmire:
 	in R0,0
+	; Attente de clic
 	cmp r0,%11000111
 	BNE findessinmire
+
+	; Attente de A
+	CMP R0,%11000101
+	BEQ effacer
+
+	; Attente de b
+	CMP R0, %11000110
+	BEQ fin
+
 	IN R3,6
 	IN R4,7
 	ST R3,x
 	ST R4,y
+	; Vérifier dans quelle zone on a cliqué
 	CMP R3,20
 	BLEU changercouleur
 	JMP CLZoneD
 
 
 changercouleur: 
+	; Récupérer R4 pour trouver la couleur
     DIVU R4,16
 	ST R4,couleur
 	JMP findessinmire
 
 CLZoneD: 
     LD R0,premier_clic
-	CMP r0,0
-	BEQ permerclique
+	CMP R0,0
+	BEQ premierclic
 	JMP tracer
 
-permerclique: 
-    Inc R0
+premierclic: 
+    INC R0
 	ST r0,premier_clic 
 	JMP misjpos
 
@@ -71,6 +86,7 @@ tracer:
 
 
 misjpos: 
+	; Envoyer les x,y précédents dans cx & cy
     ST R3,cx
 	ST R4,cy
 	jmp findessinmire	
@@ -125,5 +141,7 @@ Dessinligne:  PUSH R0
 	PULL R0
 	ret 5
 	
+
+fin: HLT
 
 .STACK 20

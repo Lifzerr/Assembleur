@@ -1,5 +1,5 @@
 .DATA
-	chaine DW "Assembleur."
+	chaine DW "Assembleur Super."
 
 .CODE 
 	LEA SP,STACK 

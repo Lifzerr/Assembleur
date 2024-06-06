@@ -2,8 +2,11 @@
 	
 .CODE 
 	LEA SP,STACK 
+	; Effacer l'écran
 	LD R5,0
 	OUT R5,5
+
+	; Initialisations
 	LD R0,0
 	LD R1,0
 	LD R2,0
@@ -11,12 +14,14 @@
 	LD R4,16
 	
 boucle: 
+	; Parammètres	
 	PUSH R0
 	PUSH R1
 	PUSH R2
 	PUSH R3
 	PUSH R4
 	call Dessinrectangle
+	; Maj couleurs & y
 	ADD R0,1
 	ADD	R2,8
 	CMP R0,16  ; Vérifier si on a fait toutes les couleurs
@@ -57,6 +62,7 @@ Dessinrectangle:
 	PULL R2
 	PULL R3
 	PULL R4
+
 	ret 5
 	
 	
