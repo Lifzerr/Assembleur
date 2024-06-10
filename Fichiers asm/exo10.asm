@@ -28,16 +28,12 @@ dessinlignemire:
 	add R0,1    ; Maj couleur
 	add	R2,8  
 	CMP R0,16   ; Vérif barre terminée
-	BEQ findessinmire   
+	BEQ boucleClics   
 	JMP dessinlignemire
 
 
-findessinmire:
+boucleClics:
 	in R0,0
-	; Attente de clic
-	cmp r0,%11000111
-	BNE findessinmire
-
 	; Attente de A
 	CMP R0,%11000101
 	BEQ effacer
@@ -46,10 +42,15 @@ findessinmire:
 	CMP R0, %11000110
 	BEQ fin
 
+	; Attente de clic
+	cmp r0,%11000111
+	BNE boucleClics
+
 	IN R3,6
 	IN R4,7
 	ST R3,x
 	ST R4,y
+
 	; Vérifier dans quelle zone on a cliqué
 	CMP R3,20
 	BLEU changercouleur
@@ -60,7 +61,7 @@ changercouleur:
 	; Récupérer R4 pour trouver la couleur
     DIVU R4,16
 	ST R4,couleur
-	JMP findessinmire
+	JMP boucleClics
 
 CLZoneD: 
     LD R0,premier_clic
@@ -89,9 +90,37 @@ misjpos:
 	; Envoyer les x,y précédents dans cx & cy
     ST R3,cx
 	ST R4,cy
-	jmp findessinmire	
+	jmp boucleClics	
 	HLT
-	
+
+effacer: ; tracer un rectangle noir
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	LD R0,20
+	LD R1,0
+	LD R2,235
+	LD R3,255
+	LD R4, %00000101
+	OUT R0,1
+	OUT R1,2
+	OUT R2,3
+	OUT R3,4
+	OUT R4,5
+	PULL R4
+	PULL R3
+	PULL R2
+	PULL R1
+	PULL R0
+	JMP boucleClics
+
+
+fin: HLT
+
+
+
 Dessinrectangle: PUSH R0
 	PUSH R1
 	PUSH R2
@@ -142,6 +171,6 @@ Dessinligne:  PUSH R0
 	ret 5
 	
 
-fin: HLT
+
 
 .STACK 20
